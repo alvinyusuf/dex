@@ -11,6 +11,10 @@
   "type": "commonjs",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "@moralisweb3/common-evm-utils": "^2.27.2",
+    "cors": "^2.8.5",
+    "dotenv": "^17.0.0",
+    "express": "^5.1.0",
+    "moralis": "^2.27.2"
   }
 }
