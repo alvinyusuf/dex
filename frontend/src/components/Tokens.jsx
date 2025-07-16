@@ -2,8 +2,8 @@ import React from 'react'
 
 export default function Tokens() {
   return (
-    <div>
-      <input type="range" min={0} max="100" defaultValue="40" className="range" />
+    <div className='flex flex-col md:flex-row gap-4'>
+      Tokens
     </div>
   )
 }

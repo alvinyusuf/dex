@@ -24,6 +24,8 @@ export default function Swap() {
     setTokenTwo(one);
   }
 
+  // function getTokens = 
+
   return (
     <div className="flex flex-col justify-center items-center gap-y-6 w-1/3 bg-gray-900 shadow-amber-50 shadow rounded-xl p-4">
       <div className="flex justify-between items-center w-full">
@@ -89,6 +91,11 @@ export default function Swap() {
             <ChevronDown />
           </button>
         </div>
+        
+        <button className="btn btn-primary w-full rounded-2xl text-lg font-semibold" disabled={!tokenOneAmount}>
+          Swap
+        </button>
+      
       </div>
 
       <dialog className="modal" id="slippage">
