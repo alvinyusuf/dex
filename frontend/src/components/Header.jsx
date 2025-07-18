@@ -1,5 +1,6 @@
 import { Link } from 'react-router';
 import Logo from '../assets/react.svg';
+import { ConnectButton } from '@xellar/kit';
 
 export default function Header() {
   return (
@@ -14,11 +15,7 @@ export default function Header() {
         </Link>
       </div>
       <div className="flex items-center gap-4">
-        <div className="flex items-center gap-2 bg-gray-700 p-2 rounded-lg font-semibold hover:bg-gray-600 transition-colors">
-          <img src="/eth.png" alt="Ethereum" width={24} height={24} />
-          Ethereum
-        </div>
-        <button className="btn btn-neutral rounded-lg">Connect Wallet</button>
+        <ConnectButton />
       </div>
     </header>
   )
