@@ -1,6 +1,7 @@
 const express = require('express');
 const Moralis = require('moralis').default;
 const cors = require('cors');
+const { default: axios } = require('axios');
 
 require('dotenv').config();
 
@@ -29,6 +30,79 @@ app.get('/token-price', async (req, res) => {
   }
 
   return res.status(200).json(usdPrices);
+});
+
+app.get('/allowance', async (req, res) => {
+  
+  const { tokenAddress, walletAddress } = req.query;
+
+  try {
+   const result = await axios.get('https://api.1inch.dev/swap/v6.1/1/approve/allowance', {
+    params: {
+      tokenAddress,
+      walletAddress,
+    },
+    headers: {
+      Authorization: `Bearer ${process.env.BE_1INCH_API_KEY}`,
+    }
+   })
+    return res.status(200).json(result.data); 
+  } catch (error) {
+    console.error('Error fetching allowance:', error);
+    return res.status(500).json({
+      error: 'Failed to fetch allowance',
+      details: error.message,
+    });
+  }
+});
+
+app.get('/approve-transaction', async (req, res) => {
+  const { tokenAddress } = req.query;
+
+  try {
+    const result = await axios.get('https://api.1inch.dev/swap/v6.1/1/approve/transaction', {
+      params: {
+        tokenAddress,
+      },
+      headers: {
+        Authorization: `Bearer ${process.env.BE_1INCH_API_KEY}`,
+      }
+    });
+    return res.status(200).json(result.data);
+  } catch (error) {
+    console.error('Error fetching approve transaction:', error);
+    return res.status(500).json({
+      error: 'Failed to fetch approve transaction',
+      details: error.message,
+    });
+  }
+});
+
+app.get('/swap', async (req, res) => {
+  const { src, dst, amount, from, origin, slippage } = req.query;
+
+  try {
+    const result = await axios.get('https://api.1inch.dev/swap/v6.1/1/swap', {
+      params: {
+        src,
+        dst,
+        amount,
+        from,
+        origin,
+        slippage,
+      },
+      headers: {
+        Authorization: `Bearer ${process.env.BE_1INCH_API_KEY}`,
+      }
+    });
+    return res.status(200).json(result.data);
+  } catch (error) {
+    console.error('Error fetching swap:', error);
+    return res.status(500).json({
+      error: 'Failed to fetch swap',
+      details: error.message,
+    });
+  }
 });
 
 
