@@ -3,8 +3,10 @@ import { useEffect, useState } from "react";
 import tokenlist from "../token-list.json";
 import axios from "axios";
 import Slippage from "./Slippage";
+import { useAccount, useSendTransaction, useWaitForTransactionReceipt } from "wagmi";
 
 export default function Swap() {
+  const { address, isConnected } = useAccount()
   const [slippage, setSlippage] = useState(3);
   const [tokenOneAmount, setTokenOneAmount] = useState("");
   const [tokenTwoAmount, setTokenTwoAmount] = useState("");
@@ -12,6 +14,26 @@ export default function Swap() {
   const [tokenTwo, setTokenTwo] = useState(tokenlist[1]);
   const [changeToken, setChangeToken] = useState(1);
   const [prices, setPrices] = useState(null);
+  const [txDetails, setTxDetails] = useState({
+    to: "",
+    data: "0x",
+    value: "0",
+  });
+
+  // ToDo: Buat message alert pada saat swap pending, berhasil atau gagal
+
+  const { data, sendTransaction } = useSendTransaction({
+    request: {
+      from: address,
+      to: String(txDetails.to),
+      data: String(txDetails.data),
+      value: String(txDetails.value),
+    }
+  })
+
+  const { isLoading, isSuccess } = useWaitForTransactionReceipt({
+    hash: data?.hash,
+  })
 
   function handleSlippageChange(e) {
     setSlippage(e.target.value);
@@ -64,9 +86,51 @@ export default function Swap() {
     setPrices(res.data);
   }
 
+  async function fetchDexSwap() {
+    const allowance = await axios.get('http://localhost:3000/allowance', {
+      params: {
+        tokenAddress: tokenOne.address,
+        walletAddress: address,
+      },
+    })
+
+    if (allowance.data.allowance === "0") {
+      const approveTx = await axios.get('http://localhost:3000/approve-transaction',{
+        params: {
+          tokenAddress: tokenOne.address,
+        },
+      });
+
+      setTxDetails(approveTx.data);
+      console.log('not approved')
+      return
+    }
+
+    const tx = await axios.get('http://localhost:3000/dex-swap', {
+      params: {
+        tokenOneAddress: tokenOne.address,
+        tokenTwoAddress: tokenTwo.address,
+        amount: tokenOneAmount.padEnd(tokenOne.decimals + tokenOneAmount.length, "0"),
+        slippage,
+        from: address,
+        origin: address,
+      },
+    });
+
+    let decimals = Number(`1E${tokenTwo.decimals}`);
+    setTokenTwoAmount(Number(tx.data.toTokenAmount) / decimals).toFixed(2);
+    setTxDetails(tx.data.tx);
+  }
+
   useEffect(() => {
     fetchPrices(tokenlist[0].address, tokenlist[1].address);
   }, [tokenOne, tokenTwo]);
+
+  useEffect(() => {
+    if(txDetails.to && isConnected) {
+      sendTransaction();
+    }
+  }, [txDetails, isConnected, sendTransaction]);
 
   return (
     <div className="flex flex-col justify-center items-center w-1/3 bg-gray-900 shadow-amber-50 shadow rounded-xl p-4">
@@ -139,7 +203,8 @@ export default function Swap() {
       </div>
       <button
         className="btn btn-primary w-full rounded-2xl text-lg font-semibold"
-        disabled={!tokenOneAmount}
+        disabled={!tokenOneAmount || !isConnected}
+        onClick={fetchDexSwap}
       >
         Swap
       </button>

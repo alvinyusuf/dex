@@ -1,5 +1,5 @@
 import { defaultConfig } from "@xellar/kit";
-import { sepolia } from "viem/chains";
+import { mainnet, sepolia } from "viem/chains";
 
 export const xellarConfig = defaultConfig({
   appName: "dex",
@@ -8,5 +8,6 @@ export const xellarConfig = defaultConfig({
   xellarEnv: "sandbox",
   chains: [
     sepolia,
+    mainnet,
   ]
 });
