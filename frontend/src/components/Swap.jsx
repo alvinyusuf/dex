@@ -77,7 +77,7 @@ export default function Swap() {
   }
 
   async function fetchPrices(one, two) {
-    const res = await axios.get("http://localhost:3000/token-price", {
+    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/token-price`, {
       params: {
         addressOne: one,
         addressTwo: two,
@@ -87,7 +87,7 @@ export default function Swap() {
   }
 
   async function fetchDexSwap() {
-    const allowance = await axios.get('http://localhost:3000/allowance', {
+    const allowance = await axios.get(`${import.meta.env.VITE_BACKEND_URL}allowance`, {
       params: {
         tokenAddress: tokenOne.address,
         walletAddress: address,
@@ -95,7 +95,7 @@ export default function Swap() {
     })
 
     if (allowance.data.allowance === "0") {
-      const approveTx = await axios.get('http://localhost:3000/approve-transaction',{
+      const approveTx = await axios.get(`${import.meta.env.VITE_BACKEND_URL}approve-transaction`,{
         params: {
           tokenAddress: tokenOne.address,
         },
@@ -106,7 +106,7 @@ export default function Swap() {
       return
     }
 
-    const tx = await axios.get('http://localhost:3000/dex-swap', {
+    const tx = await axios.get(`${import.meta.env.VITE_BACKEND_URL}dex-swap`, {
       params: {
         tokenOneAddress: tokenOne.address,
         tokenTwoAddress: tokenTwo.address,
