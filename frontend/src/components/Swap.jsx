@@ -77,7 +77,7 @@ export default function Swap() {
   }
 
   async function fetchPrices(one, two) {
-    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/token-price`, {
+    const res = await axios.get(`${import.meta.env.VITE_BACKEND_URL}token-price`, {
       params: {
         addressOne: one,
         addressTwo: two,
