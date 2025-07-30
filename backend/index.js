@@ -11,6 +11,8 @@ const port = 3000;
 app.use(cors());
 app.use(express.json());
 
+app.get('/check', (req, res) => res.status(200).json({ message: "Hello World!" }))
+
 app.get('/token-price', async (req, res) => {
   
   const {query} = req;
