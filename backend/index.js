@@ -17,21 +17,30 @@ app.get('/token-price', async (req, res) => {
   
   const {query} = req;
 
-  const responseOne = await Moralis.EvmApi.token.getTokenPrice({
-    address: query.addressOne,
-  })
-
-  const responseTwo = await Moralis.EvmApi.token.getTokenPrice({
-    address: query.addressTwo,
-  })
-
-  const usdPrices = {
-    tokenOne: responseOne.raw.usdPrice,
-    tokenTwo: responseTwo.raw.usdPrice,
-    ratio: responseOne.raw.usdPrice / responseTwo.raw.usdPrice,
+  try {
+    const responseOne = await Moralis.EvmApi.token.getTokenPrice({
+      address: query.addressOne,
+    })
+  
+    const responseTwo = await Moralis.EvmApi.token.getTokenPrice({
+      address: query.addressTwo,
+    })
+  
+    const usdPrices = {
+      tokenOne: responseOne.raw.usdPrice,
+      tokenTwo: responseTwo.raw.usdPrice,
+      ratio: responseOne.raw.usdPrice / responseTwo.raw.usdPrice,
+    }
+  
+    return res.status(200).json(usdPrices);
+  } catch (error) {
+    console.error('Error fetching token prices:', error);
+    return res.status(500).json({
+      error: 'Failed to fetch token prices',
+      details: error.message,
+    });
   }
 
-  return res.status(200).json(usdPrices);
 });
 
 app.get('/allowance', async (req, res) => {
